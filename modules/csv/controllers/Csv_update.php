@@ -1217,7 +1217,129 @@ class csv_update extends Admin_Controller
 
         }
     }
+	
+	public function save_royal_training()
+    {
+   
+        $id = $this->input->post('csv_id');
 
+
+        $start_date_train = date('Y-m-d', strtotime($this->input->post('startDate')));
+
+
+
+        $stop_date_train = date('Y-m-d', strtotime($this->input->post('endDate')));
+
+
+
+        $type_train = $this->input->post('type_train');
+
+
+        $subject_course = $this->input->post('subject_course');
+
+       
+        $skill_train = $this->input->post('skill_train');
+
+
+    $data = "INSERT INTO training(id,start_date_train,stop_date_train,type_train,subject_course,skill_train)
+     VALUES ( $id,'$start_date_train','$stop_date_train','$type_train','$subject_course','$skill_train')";
+
+    $this->db->query($data);  
+
+        $copydata = [
+            'csv_id' => $this->input->post('csv_id'),
+            'work_id' => $this->input->post('csv_id'),
+
+
+            'on_date' => date('Y-m-d', strtotime($this->input->post('startDate'))),
+
+            'attach_file' => serialize($this->input->post('reference_file')),
+
+
+            'end_date' => date('Y-m-d', strtotime($this->input->post('endDate'))),
+
+            'is_type' => 'Royal School'
+        ];
+
+        $this->db->insert('tbl_csvupdate', $copydata);
+        //$this->db->insert('training', $data);
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode(['status' => 'success']);
+
+
+
+    }
+	
+	public function save_csv_retires()
+    {
+
+        if ($this->input->post('dateinput') != '') {
+
+
+            $csv_id = $this->input->post('csv_id');
+
+            $data = ['csv_id' => $this->input->post('csv_id'),
+
+
+
+                'work_id' => $this->input->post('csv_work_id'),
+
+
+
+                'on_date' => date('Y-m-d', strtotime($this->input->post('dateinput'))),
+
+
+
+                'remark' => $this->input->post('remark'),
+
+
+
+                'attach_file' => serialize($this->input->post('reference_file')),
+
+
+
+                'is_type' => 'និវត្ដន៍'];
+
+
+            $this->db->insert('tbl_csvupdate', $data);
+
+
+            $sdata=['salary_level'=>'និវត្ដន៍'];
+            // $this->db->insert('salary', $sdata);
+
+            update('salary', $sdata, array('id' => $csv_id));
+
+            
+
+
+
+            header('Content-Type: application/json; charset=utf-8');
+
+
+
+            echo json_encode(['status' => 'success']);
+
+
+
+        } else {
+
+
+
+            header('Content-Type: application/json; charset=utf-8');
+
+
+
+            echo json_encode(['status' => 'error']);
+
+
+
+        }
+
+
+
+    }
 
 }
 
