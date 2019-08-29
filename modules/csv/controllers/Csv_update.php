@@ -118,6 +118,21 @@ class csv_update extends Admin_Controller
 
     }
 
+    public function csv_units_dignitaries()
+    {
+        $this->load->view('header');
+        $this->load->view('csv_update/csv_units_dignitaries');
+        $this->load->view('footer');
+    }
+
+    public function list_promoted_csv()
+    {
+        $this->load->view('header');
+        $this->load->view('csv/csv_update/csv_promoted');
+        $this->load->view('footer');
+
+    }
+
     function get_csv()
     {
 
