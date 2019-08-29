@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <?php
+=======
+﻿<?php
+>>>>>>> rathana
 
 
 /*
@@ -397,8 +401,44 @@ class csv_update extends Admin_Controller
         //            $sWhere .= "1=1 AND (rd.pro_id IN({$pr_code})) ";
 
         //        }
+<<<<<<< HEAD
+=======
 
 
+        $where = " ";
+
+        if ($search != '') {
+
+            $where .= "AND (civil_servant_id LIKE '%{$search}%' ";
+
+            $where .= "OR firstname LIKE '%{$search}%' ";
+
+            $where .= "OR lastname LIKE '%{$search}%' ";
+
+            // $where .= "OR gender LIKE '%{$search}%' ";
+
+            $where .= "OR english_full_name LIKE '%{$search}%' ) ";
+
+            // $where .= "OR mobile_phone LIKE '%{$search}%' ";
+
+            if ($year != 0) {
+
+                $where .= " AND datepromoted LIKE  '{$year}%' ";
+
+            } else {
+
+                $where .= "  ";
+
+            }
+
+        } elseif ($year != 0) {
+
+            $where .= " AND datepromoted LIKE  '{$year}%' ";
+>>>>>>> rathana
+
+        } elseif ($year == 0) {
+
+<<<<<<< HEAD
         $where = " ";
 
         if ($search != '') {
@@ -431,6 +471,9 @@ class csv_update extends Admin_Controller
 
         } elseif ($year == 0) {
 
+            $where = " ";
+        }
+=======
             $where = " ";
         }
 
@@ -467,14 +510,91 @@ class csv_update extends Admin_Controller
 
     }
 
+>>>>>>> rathana
 
+        // cnt. ==============
 
+<<<<<<< HEAD
+        $q = query("SELECT COUNT(*) as c FROM v_getpromote_date 
+
+                                WHERE    1=1  {$where} ");
+
+        $total_record = $q->row()->c - 0;
+
+        $total_page = ceil($total_record / $limit);
+        // qr. ==============
+
+        $qr = query("SELECT vg.*,(SELECT TYPE FROM list_salary e1 WHERE e1.id < e.id ORDER BY id DESC LIMIT 1 OFFSET 0) AS prev_value FROM v_getpromote_date vg JOIN list_salary e ON vg.`levelsalary` = e.`type` WHERE  1 = 1 {$where}
+
+                                ORDER BY
+                                        CASE
+                                WHEN common_official_code IN ('', '0') THEN
+
+                                        1    ELSE    0    END,
+
+                                 common_official_code ASC
+
+                                LIMIT {$offset}, {$limit}  ");
+
+        $res = $qr->result();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $arr = array('total_page' => $total_page, 'res' => $res, 'total_record' => $total_record);
+
+        echo json_encode($arr);
+
+    }
+=======
     public function action_excel()
     {
         $this->load->library('excel');
 
         $year = $this->input->get('year');
 
+        $sql_str = "SELECT vg.*,(SELECT TYPE FROM list_salary e1 WHERE e1.id < e.id ORDER BY id DESC LIMIT 1 OFFSET 0) AS prev_value FROM v_getpromote_date vg JOIN list_salary e ON vg.`levelsalary` = e.`type` WHERE  1 = 1 AND datepromoted LIKE  '{$year}%'
+
+                                ORDER BY
+                                        CASE
+
+                                WHEN common_official_code IN ('', '0') THEN
+
+                                        1   ELSE    0    END,
+
+                                 common_official_code ASC";
+        $list_csv = $this->db->query($sql_str);
+
+        $object = new PHPExcel();
+
+        //$objReader = PHPExcel_IOFactory::createReader('Excel2007');
+
+        //$objReader->setReadDataOnly(true);
+
+        $object->setActiveSheetIndex(0);
+
+        $table_columns = ['ល.រ', 'អត្តលេខមន្ត្រី', 'នាម និងគោត្តនាម', 'ភេទ', 'មុខតំណែង', 'ថ្ងៃ​ ខែ ឆ្នាំ កំណើត', 'ថ្ងៃ​ខែឆ្នាំ ដំឡើងថ្នាក់ ឋានន្តរស័ក្តិចុងក្រោយ', 'ក្របខណ្ឌបច្ចុប្បន្ន', 'ក្របខណ្ឌស្នើសុំ', 'លេខព្រះរាជក្រឹត្យ អនុក្រឹត នៃដំឡើងថ្នាក់​ ឋានន្តរស័ក្តិ ចុងក្រោយ'];
+
+        $column = 0;
+
+        //$table_columns = ['eee','ffgggg','ddfdfd','fsdfadf','gfghfgg','frrtrter','uuuiuyj','tyrtyrt','gdfdfgf'];
+>>>>>>> rathana
+
+        foreach ($table_columns as $field) {
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+
+<<<<<<< HEAD
+    public function action_excel()
+    {
+        $this->load->library('excel');
+=======
+            $column++;
+        }
+>>>>>>> rathana
+
+        $year = $this->input->get('year');
+
+<<<<<<< HEAD
         $sql_str = "SELECT vg.*,(SELECT TYPE FROM list_salary e1 WHERE e1.id < e.id ORDER BY id DESC LIMIT 1 OFFSET 0) AS prev_value FROM v_getpromote_date vg JOIN list_salary e ON vg.`levelsalary` = e.`type` WHERE  1 = 1 AND datepromoted LIKE  '{$year}%'
 
                                 ORDER BY
@@ -507,8 +627,7 @@ class csv_update extends Admin_Controller
 
             $column++;
         }
-
-
+=======
         foreach (range('A', 'J') as $indexColumn) {
 
             $object->getActiveSheet()->getColumnDimension($indexColumn)->setAutoSize(true);
@@ -534,6 +653,70 @@ class csv_update extends Admin_Controller
 
             $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row->lastname . ' ' . $row->firstname);
 
+            $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row->gender);
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row->current_role_in_khmer);
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, date('d-m-Y', strtotime($row->dateofbirth)));
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, date('d-m-Y', strtotime($row->datepromoted)));
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row->levelsalary);
+>>>>>>> rathana
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row->prev_value);
+
+<<<<<<< HEAD
+        foreach (range('A', 'J') as $indexColumn) {
+
+            $object->getActiveSheet()->getColumnDimension($indexColumn)->setAutoSize(true);
+        }
+
+        $object->getActiveSheet()->getStyle('A1:J1')->getFont()->setBold(true);
+
+        $object->getActiveSheet()->getStyle('A1:J1')->applyFromArray(
+
+            array('fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'CCCCCC'))
+
+            ,));
+
+        $excel_row = 2;
+
+        $i = 0;
+
+        foreach ($list_csv->result() as $row) {
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, ++$i);
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row->civil_servant_id);
+=======
+            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row->reference_promote);
+
+            $excel_row++;
+
+        }
+
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+
+        header("Content-Type:  application/vnd.ms-excel; charset=utf-8");
+
+        //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        $filename = strtotime(date('Y-m-d'));
+
+        header("Content-Disposition: attachment; filename='CSV_List_Promote_{$filename}-{$year}.xlsx'");
+
+        header('Cache-Control: max-age=0');
+
+        $object_writer->save('php://output');
+
+        exit();
+    }
+>>>>>>> rathana
+
+            $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row->lastname . ' ' . $row->firstname);
+
+<<<<<<< HEAD
             $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row->gender);
 
             $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row->current_role_in_khmer);
@@ -570,6 +753,47 @@ class csv_update extends Admin_Controller
     }
 
 
+    public function save_internship_info()
+    {
+        $data = array(
+            'last_name' => $this->input->post('last_name'),
+
+            'first_name' => $this->input->post('first_name'),
+
+            'intern_id' => $this->input->post('no_code'),
+
+            'english_full_name' => $this->input->post('english_full_name'), 
+
+            'gender' => $this->input->post('gender'),
+
+            'date_of_birth' => date('Y-m-d', strtotime($this->input->post('date_of_birth'))),
+
+            'place_of_birth' => $this->input->post('place_of_birth'),
+
+            'address' => $this->input->post('address'),
+
+            'phone' => $this->input->post('phone_number'),
+
+            'email' => $this->input->post('email'),
+
+            'major' => $this->input->post('major'),
+
+            'school' => $this->input->post('school'),
+
+            'work_as' => $this->input->post('work_as'),
+
+            'photo' => $this->input->post('photo'),
+
+            'intern_cv' => serialize($this->input->post('intern_cv')),
+                
+        );
+
+        $this->db->insert('internship', $data);
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode(['status' => 'success']);
+=======
     public function save_internship_info()
     {
         $data = array(
@@ -651,6 +875,80 @@ class csv_update extends Admin_Controller
 
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['status' => 'error']);
+>>>>>>> rathana
+
+        }
+
+    }
+
+    public function save_maternity_leave()
+    {
+        $data = array(
+            'csv_id' => $this->input->post('csv_id'),
+
+<<<<<<< HEAD
+    public function save_csv_teminate()
+    {
+        $check_csv = $this->db->query('SELECT * FROM tbl_csvupdate WHERE csv_id =' . $this->input->post('csv_id') . ' AND is_type ="terminated"');
+
+        if ($check_csv->num_rows() > 0) {
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'token']);
+
+            exit();
+
+        }
+
+        if ($this->input->post('dateinput') != '') {
+
+            $data = ['csv_id' => $this->input->post('csv_id'),
+
+                'work_id' => $this->input->post('csv_work_id'),
+
+                'on_date' => date('Y-m-d', strtotime($this->input->post('dateinput'))),
+
+                'remark' => $this->input->post('remark'),
+                'attach_file' => serialize($this->input->post('reference_file')),
+
+                'is_type' => 'terminated'];
+            $this->db->insert('tbl_csvupdate', $data);
+=======
+            'work_id' => $this->input->post('csv_work_id'),
+
+            'on_date' => date('Y-m-d', strtotime($this->input->post('firstDate'))),
+
+            'end_date' => date('Y-m-d', strtotime($this->input->post('secondDate'))),
+
+            'issue_date' => date('Y-m-d', strtotime($this->input->post('issueDate'))),
+
+            'remark' => $this->input->post('reMark'),
+
+            'attach_file' => serialize($this->input->post('tags')),
+
+            'referencse_no' => $this->input->post('txtnu_of_reference'),
+
+            'is_type' => 'Maternity leave'
+
+        );
+
+        $this->db->insert('tbl_csvupdate', $data);
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode(['status' => 'success']);
+>>>>>>> rathana
+
+            header('Content-Type: application/json; charset=utf-8');
+
+<<<<<<< HEAD
+            echo json_encode(['status' => 'success']);
+
+        } else {
+
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error']);
 
         }
 
@@ -684,8 +982,7 @@ class csv_update extends Admin_Controller
         header('Content-Type: application/json; charset=utf-8');
 
         echo json_encode(['status' => 'success']);
-
-
+=======
 
     }
 
@@ -728,9 +1025,27 @@ class csv_update extends Admin_Controller
                     `pure_salary`,`title_yearly`,`less_than_child15`,`more_than_child15`,`family_assistant`,`additional_salary`,`assistant_evidence`,`adviser_evidence`,`additional_expire`,`remind_salary`,`total`,`exchange`,`total_in_dollar`
             FROM 
             salary AS s
+>>>>>>> rathana
 
             WHERE s.id = '{$csv_id}' ");
 
+<<<<<<< HEAD
+
+    }
+
+    public function promoted_former_work()
+    {
+        $csv_id = $this->input->post('csv_id');
+
+        $csv_work_id = $this->input->post('csv_work_id');
+        $salary_level = $this->input->post('salary_level');
+
+        $index_multiply = $this->input->post('index_multiply');
+
+        $index_salary = $this->input->post('index_salary');
+
+        $pure_salary = $this->input->post('pure_salary');
+=======
         update('salary', $data_salary, array('id' => $csv_id));
 
         $data = array(
@@ -744,6 +1059,187 @@ class csv_update extends Admin_Controller
 
         );
 
+        $this->db->insert('tbl_csvupdate', $data);
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'success']);
+
+    }
+
+    public function update_promote_csv()
+    {
+>>>>>>> rathana
+
+        $get_checkVals = $this->input->post('checkedVals');
+
+<<<<<<< HEAD
+        $tags = serialize($this->input->post('tags'));
+
+        $txtNum = $this->input->post('txtNum');
+
+        $remark = $this->input->post('remark');
+
+        $data_salary = array(
+
+            'salary_level' => $salary_level,
+
+            'index_salary' => $index_salary,
+
+            'index_multiply' => $index_multiply,
+
+            'pure_salary' => $pure_salary
+        );
+        
+        query(" INSERT INTO salary_history (  `id` , `salary_level`, `index_multiply`,`index_salary`,
+        `pure_salary`,`title_yearly`,`less_than_child15`,`more_than_child15`,`family_assistant`,`additional_salary`,`assistant_evidence`,`adviser_evidence`,`additional_expire`,`remind_salary`,`total`,`exchange`,`total_in_dollar`)
+
+            SELECT      `id` , `salary_level`, `index_multiply`,`index_salary`,
+                    `pure_salary`,`title_yearly`,`less_than_child15`,`more_than_child15`,`family_assistant`,`additional_salary`,`assistant_evidence`,`adviser_evidence`,`additional_expire`,`remind_salary`,`total`,`exchange`,`total_in_dollar`
+            FROM 
+            salary AS s
+=======
+        foreach ($get_checkVals as $key => $value) {
+
+            $sql = "SELECT vg.*,(SELECT TYPE FROM list_salary e1 WHERE e1.id < e.id ORDER BY id DESC LIMIT 1 OFFSET 0) AS prev_value FROM v_getpromote_date vg JOIN list_salary e ON vg.`levelsalary` = e.`type` WHERE  1 = 1 AND vg.id = {$value}";
+
+            $record = $this->db->query($sql)->row();
+            $prev_value = $record->prev_value;
+
+            $l = "SELECT multiple, multiple_money FROM list_salary WHERE type = '{$prev_value}'";
+
+            $re = $this->db->query($l)->row();
+
+            $lm = $re->multiple;
+
+            $lmm = $re->multiple_money;
+
+            $resm = $lm * $lmm;
+
+            $txtdate = date('Y-m-d', strtotime($this->input->post('txtdate')));
+
+            $txtNum = $this->input->post('txtNum');
+
+            $remark = $this->input->post('remark');
+
+            $reference_file = serialize($this->input->post('tags'));
+
+            $m = "UPDATE work SET `reference_promote` = '{$txtNum}', `date_late_promote` = '{$txtdate}', `reference_file` = '{$reference_file}', `remark` = '{$remark}' WHERE `work`.`id` = {$value}";
+
+            $p = "UPDATE salary SET `index_multiply` = '{$lm}', `index_salary` = '{$lmm}', `pure_salary` = '{$resm}', `salary_level` = '{$prev_value}' WHERE `salary`.`id` = {$value}";
+
+            $this->db->query($m);
+
+            $this->db->query($p);
+
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode(['status' => 'success']);
+    }
+
+
+    public function transfer_job()
+    {
+
+        $current_role = $this->input->post('current_role_id');
+
+        $unit_code = $this->input->post('unit');
+
+        $general_dep_name = $this->input->post('general_dep_id');
+
+        $d_name = $this->input->post('d_id');
+
+         $work_office = $this->input->post('work_office');
+
+         $province_office = $this->input->post('province_office');
+
+        $land_officail = $this->input->post('land_official');
+
+        $promote_date = date('Y-m-d', strtotime($this->input->post('promote_date')));
+>>>>>>> rathana
+
+        $note = $this->input->post('note');
+
+<<<<<<< HEAD
+        update('salary', $data_salary, array('id' => $csv_id));
+
+        $data = array(
+            'csv_id' => $csv_id,
+            'work_id' => $csv_work_id,
+            'on_date' => $txtdate,
+            'referencse_no' => $txtNum,
+            'remark' => $remark,
+            'attach_file' => $tags,
+            'is_type' => 'Officers were promoted by former work'
+=======
+        //$reference_file = serialize($this->input->post('transfer_file'));
+
+        $reference_file_in = $this->input->post('send');
+
+        $reference_promote = $this->input->post('attachment');
+        $id = $this->input->post('csv_id');
+
+         $query= $this->db->query("select unit from unit where id=". ($this->input->post('old_unit')));
+
+         foreach ($query->result() as $res ){
+
+             $old_unit=$res->unit_english; 
+
+             //$old_unit=$res->unit; 
+
+         }
+
+        $old_work = $this->input->post('old_work');
+
+         $old_position = $this->input->post('old_position');
+
+         $old_general_dep = $this->input->post('old_general_dep');
+
+         $old_department = $this->input->post('old_department');
+
+         $old_office = $this->input->post('old_office');
+
+         $old_land_office = $this->input->post('old_land_office');
+
+         $old_province_office = $this->input->post('old_province_office');
+
+         $old_date_in =date('Y-m-d', strtotime( $this->input->post('old_date_in')));
+       
+         $m = "INSERT INTO workhistory(id,start_date,stop_date,institution,department,office,position) VALUES ( $id,'$old_date_in','$promote_date','MLMUPC','$old_unit','$old_department','$old_position'); ";
+         $this->db->query($m);  
+
+        $data_work = array('promote_date' => $promote_date,
+
+            'unit' => $unit_code,
+
+            'work_office' => $work_office,
+
+            'province_office' => $province_office,
+
+            'note' => $note,
+
+            'general_department' => $general_dep_name,
+
+            'department' => $d_name,
+            'land_official' => $land_officail,
+
+            'current_role_id' => $current_role,
+
+            'reference_promote' => $reference_promote,
+
+            'reference_file_in' => $reference_file_in,
+
+            'is_transfer' => 'transfered'
+        );
+
+        update('work', $data_work, array('id' => $id));
+        header('Content-Type: application/json; charset=utf-8');
+>>>>>>> rathana
+
+        echo json_encode(['status' => 'success']);
+
+<<<<<<< HEAD
         $this->db->insert('tbl_csvupdate', $data);
 
         header('Content-Type: application/json; charset=utf-8');
@@ -832,57 +1328,7 @@ class csv_update extends Admin_Controller
              $old_unit=$res->unit_english; 
 
              //$old_unit=$res->unit; 
-
-         }
-
-        $old_work = $this->input->post('old_work');
-
-         $old_position = $this->input->post('old_position');
-
-         $old_general_dep = $this->input->post('old_general_dep');
-
-         $old_department = $this->input->post('old_department');
-
-         $old_office = $this->input->post('old_office');
-
-         $old_land_office = $this->input->post('old_land_office');
-
-         $old_province_office = $this->input->post('old_province_office');
-
-         $old_date_in =date('Y-m-d', strtotime( $this->input->post('old_date_in')));
-       
-         $m = "INSERT INTO workhistory(id,start_date,stop_date,institution,department,office,position) VALUES ( $id,'$old_date_in','$promote_date','MLMUPC','$old_unit','$old_department','$old_position'); ";
-         $this->db->query($m);  
-
-        $data_work = array('promote_date' => $promote_date,
-
-            'unit' => $unit_code,
-
-            'work_office' => $work_office,
-
-            'province_office' => $province_office,
-
-            'note' => $note,
-
-            'general_department' => $general_dep_name,
-
-            'department' => $d_name,
-            'land_official' => $land_officail,
-
-            'current_role_id' => $current_role,
-
-            'reference_promote' => $reference_promote,
-
-            'reference_file_in' => $reference_file_in,
-
-            'is_transfer' => 'transfered'
-        );
-
-        update('work', $data_work, array('id' => $id));
-        header('Content-Type: application/json; charset=utf-8');
-
-        echo json_encode(['status' => 'success']);
-
+=======
     }
 
 
@@ -1013,8 +1459,42 @@ class csv_update extends Admin_Controller
         }
 
     }
+>>>>>>> rathana
 
+         }
 
+<<<<<<< HEAD
+        $old_work = $this->input->post('old_work');
+
+         $old_position = $this->input->post('old_position');
+
+         $old_general_dep = $this->input->post('old_general_dep');
+
+         $old_department = $this->input->post('old_department');
+
+         $old_office = $this->input->post('old_office');
+
+         $old_land_office = $this->input->post('old_land_office');
+
+         $old_province_office = $this->input->post('old_province_office');
+
+         $old_date_in =date('Y-m-d', strtotime( $this->input->post('old_date_in')));
+       
+         $m = "INSERT INTO workhistory(id,start_date,stop_date,institution,department,office,position) VALUES ( $id,'$old_date_in','$promote_date','MLMUPC','$old_unit','$old_department','$old_position'); ";
+         $this->db->query($m);  
+
+        $data_work = array('promote_date' => $promote_date,
+
+            'unit' => $unit_code,
+
+            'work_office' => $work_office,
+
+            'province_office' => $province_office,
+
+            'note' => $note,
+
+            'general_department' => $general_dep_name,
+=======
     public function save_dignitaries()
 
     {
@@ -1042,8 +1522,26 @@ class csv_update extends Admin_Controller
         );
 
         //$this->db->insert('tbl_csvupdate', $data);
+>>>>>>> rathana
 
+            'department' => $d_name,
+            'land_official' => $land_officail,
 
+<<<<<<< HEAD
+            'current_role_id' => $current_role,
+
+            'reference_promote' => $reference_promote,
+
+            'reference_file_in' => $reference_file_in,
+
+            'is_transfer' => 'transfered'
+        );
+
+        update('work', $data_work, array('id' => $id));
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode(['status' => 'success']);
+=======
 
         // $medal_id = $this->input->post('medal_id');
 
@@ -1054,6 +1552,7 @@ class csv_update extends Admin_Controller
             $get_date = date('Y-m-d', strtotime($this->input->post('txtdate')));
 
             $medal_type = $this->input->post('selected1');
+>>>>>>> rathana
 
             $medal= $this->input->post('selected');
 
@@ -1063,6 +1562,33 @@ class csv_update extends Admin_Controller
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['status' => 'success']);
 
+<<<<<<< HEAD
+    public function save_del_meternity()
+    {
+        $id = $this->input->post('csv_id');
+
+        //        print_r($id);
+
+        if ($id > 0) {
+
+            $data = ['csv_id' => $this->input->post('csv_id'),
+
+                'work_id' => $this->input->post('csv_work_id'),
+
+                'on_date' => date('Y-m-d', strtotime($this->input->post('txtDate'))),
+
+                'remark' => $this->input->post('remark'),
+
+                'attach_file' => serialize($this->input->post('tags')),
+
+                'referencse_no' => $this->input->post('txtnu_of_reference'),
+
+                'is_type' => $this->input->post('cbo')];
+
+            $this->db->insert('tbl_csvupdate', $data);
+
+        //                 = query("DELETE FROM `civilservant` WHERE `civilservant.id` = '{$id}' ");
+=======
     }
 
 
@@ -1097,9 +1623,114 @@ class csv_update extends Admin_Controller
 
     public function index_miltiple_salary()
     {
+>>>>>>> rathana
 
         $salary_level = $this->input->post('salary_level');
 
+<<<<<<< HEAD
+            $query = query("SELECT   *    FROM      civilservant AS cs  WHERE    cs.id  = '{$id}' ")->row();
+
+            /// rathana
+            query( " INSERT INTO civilservant_deleted
+
+                SELECT * FROM civilservant
+
+                WHERE civilservant.id = '{$id}' ");
+
+            /////
+
+            query("INSERT INTO activity_log(user_name,full_name,idtemp,action) VALUES ('" . $this->session->userdata('user_name') . "', '" . $this->session->userdata('full_name') . "', '" . $query->lastname . " " . $query->firstname . "', 'Deleted') ");
+
+            
+            query("DELETE    FROM    civilservant   WHERE civilservant.id = '{$id}' ");
+
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'success']);
+
+        } else {
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'error']);
+        }
+
+    }
+
+
+    public function delete_csv_transfer_out()
+    {
+
+        $id = $this->input->post('csv_id');
+
+        if ($id > 0) {
+
+            $data = [
+
+                'csv_id' => $this->input->post('csv_id'),
+
+                'work_id' => $this->input->post('csv_work_id'),
+
+                'referencse_no' => $this->input->post('txtnu_of_reference'),
+
+                'transfer_job_out' => $this->input->post('txttransferto'),
+
+                'on_date' => date('Y-m-d', strtotime($this->input->post('dateinput'))),
+
+                'remark' => $this->input->post('remark'),
+
+                'attach_file' => serialize($this->input->post('outreference_file')),
+
+                'is_type' => 'transfer_out'];
+
+            $this->db->insert('tbl_csvupdate', $data);
+
+            $query = query("SELECT
+                                     *
+                                        FROM
+                                                civilservant AS cs
+                                        WHERE
+
+                                                cs.id  = '{$id}' ")->row();
+
+        /*  copy all data from civilservant to civilservant_delete */   
+
+                query( " INSERT INTO civilservant_deleted
+
+                SELECT * FROM civilservant
+
+                WHERE civilservant.id = '{$id}' ");
+
+        //                                        
+
+            query("INSERT INTO activity_log(user_name,full_name,idtemp,action) VALUES ('" . $this->session->userdata('user_name') . "', '" . $this->session->userdata('full_name') . "', '" . $query->lastname . " " . $query->firstname . "', 'Deleted') ");
+
+         
+            query("  DELETE
+
+                        FROM
+                                civilservant
+                        WHERE
+                                civilservant.id = '{$id}' ");
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'success']);
+
+        } else {
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'error']);
+
+        }
+
+    }
+
+
+    public function save_dignitaries()
+=======
         //         $salary_level = $form->getValue('salary_level');
 
         $qr = query("SELECT DISTINCT
@@ -1217,8 +1848,226 @@ class csv_update extends Admin_Controller
 
         }
     }
+	
+	public function save_royal_training()
+    {
+   
+        $id = $this->input->post('csv_id');
+>>>>>>> rathana
+
+    {
+
+        $data = array(
+
+            'csv_id' => $this->input->post('csv_id'),
+
+            'work_id' => $this->input->post('csv_work_id'),
+
+            'on_date' => date('Y-m-d', strtotime($this->input->post('txtdate'))),
+
+            'referencse_no' => $this->input->post('txtNum'),
+
+            'remark' => $this->input->post('remark'),
+
+            'attach_file' => serialize($this->input->post('tags')),
+
+            'medal_type' => $this->input->post('selected1'),
+
+            'medal' => $this->input->post('selected'),
+
+            'is_type' => 'Officers were awarded'
+
+        );
+
+        //$this->db->insert('tbl_csvupdate', $data);
 
 
+
+        // $medal_id = $this->input->post('medal_id');
+
+            //$medal_type = $this->input->post('medal_type');
+
+            
+
+            $get_date = date('Y-m-d', strtotime($this->input->post('txtdate')));
+
+            $medal_type = $this->input->post('selected1');
+
+            $medal= $this->input->post('selected');
+
+            $data_medal = array('id' => $this->input->post('csv_id'), 'medal_type' => $medal_type, 'class' => $medal, 'get_date' => $get_date);
+
+            $this->db->insert('medal', $data_medal);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'success']);
+
+    }
+<<<<<<< HEAD
+
+
+    public function get_dignitaries()
+    {
+
+        $select = $this->input->post('select');
+
+        $qr = query("SELECT * FROM `tbl_medal` where `tbl_medal`.`parent` = '{$select}'");
+
+        $res = $qr->result();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($res);
+    }
+
+
+    public function level_salary()
+    {
+        $qr = query("SELECT DISTINCT
+                                        l.type,
+                                        l.multiple,
+                                        l.multiple_money
+                        FROM
+                                        list_salary AS l");
+        $res = $qr->result();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode($res);
+
+    }
+
+    public function index_miltiple_salary()
+    {
+
+        $salary_level = $this->input->post('salary_level');
+
+        //         $salary_level = $form->getValue('salary_level');
+
+        $qr = query("SELECT DISTINCT
+                            l.type,
+
+                            l.multiple,
+
+                            l.multiple_money
+
+                    FROM
+                            list_salary AS l
+                    WHERE l.type = '{$salary_level}'");
+
+        $res = $qr->result();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo json_encode($res);
+    }
+
+    public function promoted_certificate()
+    {
+
+        $csv_id = $this->input->post('csv_id');
+
+        $csv_work_id = $this->input->post('csv_work_id');
+        $salary_level = $this->input->post('salary_level');
+
+        $index_multiply = $this->input->post('index_multiply');
+
+        $index_salary = $this->input->post('index_salary');
+
+        $pure_salary = $this->input->post('pure_salary');
+=======
+	
+	public function save_csv_retires()
+    {
+
+        if ($this->input->post('dateinput') != '') {
+>>>>>>> rathana
+
+        $txtdate = date('Y-m-d', strtotime($this->input->post('txtdate')));
+
+        $tags = serialize($this->input->post('tags'));
+
+        $txtNum = $this->input->post('txtNum');
+
+        $remark = $this->input->post('remark');
+
+        $data_salary = array(
+
+            'salary_level' => $salary_level,
+
+            'index_salary' => $index_salary,
+
+            'index_multiply' => $index_multiply,
+
+            'pure_salary' => $pure_salary
+        );
+
+        update('salary', $data_salary, array('id' => $csv_id));
+
+        $data = array(
+            'csv_id' => $csv_id,
+            'work_id' => $csv_work_id,
+            'on_date' => $txtdate,
+            'referencse_no' => $txtNum,
+            'remark' => $remark,
+            'attach_file' => $tags,
+            'is_type' => 'Officers were promoted by certificate'
+
+        );
+
+        $this->db->insert('tbl_csvupdate', $data);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['status' => 'success']);
+
+    }
+
+    public function save_csv_permission_holiday()
+    {
+        $check_csv = $this->db->query('  SELECT * FROM tbl_csvupdate 
+                        WHERE csv_id =' . $this->input->post('csv_id') . 
+                        ' AND on_date =' . date('Y-m-d', strtotime($this->input->post('dateinput'))).
+                        ' AND is_type ="permission holiday"'
+        );
+
+        if ($check_csv->num_rows() > 0) {
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'token']);
+
+            exit();
+
+        }
+
+        if ($this->input->post('dateinput') != '') {
+
+            $data = ['csv_id' => $this->input->post('csv_id'),
+
+                'work_id' => $this->input->post('csv_work_id'),
+
+                'on_date' => date('Y-m-d', strtotime($this->input->post('dateinput'))),
+                'end_date' => date('Y-m-d', strtotime($this->input->post('dateinputend'))),
+                'referencse_no' =>$this->input->post('reason'),
+                'remark' => $this->input->post('remark'),
+
+                'attach_file' => serialize($this->input->post('reference_file')),
+
+                'is_type' => 'permission holiday'];
+            $this->db->insert('tbl_csvupdate', $data);
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            echo json_encode(['status' => 'success']);
+
+        } else {
+
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['status' => 'error']);
+
+        }
+    }
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> rathana
 }
 
 
